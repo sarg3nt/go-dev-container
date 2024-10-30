@@ -19,6 +19,7 @@ permissions: read-all
 
 jobs:
   release-build-and-push:
+    name: Weekly Release Build and Push
     runs-on: ubuntu-latest
     permissions:
       contents: write
