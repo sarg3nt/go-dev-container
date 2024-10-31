@@ -32,7 +32,7 @@ export PROMPT_DIRTRIM=4
 # Set up bash history to work with the passed in Docker volume
 export PROMPT_COMMAND='history -a' &&
   export HISTFILE=/commandhistory/.bash_history
-export PATH="${HOME}/.krew/bin:${HOME}/.local:${HOME}/.local/bin:${HOME}/.local/share:$HOME/.local/share/mise/shims:$HOME/bin:${PATH}"
+export PATH="${HOME}/.local:${HOME}/.local/bin:${HOME}/.local/share:$HOME/.local/share/mise/shims:$HOME/bin:${PATH}"
 
 export EDITOR="nano"
 
@@ -46,12 +46,11 @@ alias la='ls -A'
 alias d="docker"
 
 # Kubernetes
-alias a="argocd"
 alias k="k9s"
 alias kc="kubectl"
 alias kga="kubectl_get_all"
-alias kx="kubectl ctx"
-alias kn="kubectl ns"
+alias kx="kubectx"
+alias kn="kubens"
 alias h="helm"
 
 # shellcheck source=/dev/null
@@ -83,10 +82,9 @@ complete -F __start_helm helm
 # Starship
 eval "$(starship init bash)"
 
-alias g="git"
-
 # Utils
 alias help="/usr/local/bin/help"
+alias g=git
 
 # Run fzf
 # shellcheck source=/dev/null
@@ -94,7 +92,7 @@ alias help="/usr/local/bin/help"
 
 # Active mise
 eval "$(/usr/local/bin/mise activate bash)"
-mie trust --all
+mise trust --all
 mise install --yes
 
 # Run help screen on shell start.
