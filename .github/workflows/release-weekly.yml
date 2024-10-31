@@ -112,7 +112,7 @@ jobs:
         id: create_release
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5
         with:
-          body: "A Weekly release contianing upgrades to system packages in the base Rocker Linux container."
+          body: "A Weekly release contianing upgrades to system packages in the base Rocky Linux container."
           makeLatest: true
           prerelease: false
           tag: ${{ env.VERSION }}
