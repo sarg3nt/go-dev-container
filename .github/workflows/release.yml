@@ -24,52 +24,7 @@ jobs:
         uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7
         with:
           disable-sudo: true
-          egress-policy: block
-          allowed-endpoints: >
-            api.github.com:443
-            auth.docker.io:443
-            cdn.dl.k8s.io:443
-            codecs.fedoraproject.org:443
-            distro.ibiblio.org:80
-            dl.google.com:443
-            dl.k8s.io:443
-            download.docker.com:443
-            epel.mirror.shastacoe.net:443
-            ftp-nyc.osuosl.org:443
-            ftp.agdsn.de:80
-            ftp.fau.de:80
-            ftp.halifax.rwth-aachen.de:443
-            ftp.plusline.net:443
-            get.helm.sh:443
-            ghcr.io:443
-            github.com:443
-            gitlab.com:443
-            mirror.chpc.utah.edu:80
-            mirror.informatik.hs-fulda.de:443
-            mirror.rnet.missouri.edu:80
-            mirror.siena.edu:80
-            mirror1.hs-esslingen.de:443
-            mirrors.fedoraproject.org:443
-            mirrors.rit.edu:80
-            mirrors.rockylinux.org:443
-            mirrors.xtom.de:80
-            mise-versions.jdx.dev:80
-            mise.jdx.dev:80
-            objects.githubusercontent.com:443
-            ohioix.mm.fcix.net:80
-            pkg-containers.githubusercontent.com:443
-            production.cloudflare.docker.com:443
-            proxy.golang.org:443
-            raw.githubusercontent.com:443
-            registry-1.docker.io:443
-            repo.ialab.dsu.edu:80
-            rocky-linux-europe-west3.production.gcp.mirrors.ctrliq.cloud:443
-            rocky.mirror.shastacoe.net:443
-            sftp.hpc.fau.edu:443
-            sum.golang.org:443
-            us.mirrors.cicku.me:443
-            volico.mm.fcix.net:80
-
+          egress-policy: audit
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
@@ -100,5 +55,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-        env:  
-          GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}

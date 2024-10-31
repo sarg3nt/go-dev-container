@@ -28,8 +28,8 @@ jobs:
       - name: Harden Runner
         uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7
         with:
+          disable-sudo: true
           egress-policy: audit
-
       - name: 'Checkout Repository'
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
@@ -79,7 +79,7 @@ jobs:
         id: create_release
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5
         with:
-          body: "A Weekly release contianing upgrades to system packages in the base Rocker Linux container."
+          body: "A Weekly release contianing upgrades to system packages in the base Rocky Linux container."
           makeLatest: true
           prerelease: false
           tag: ${{ env.VERSION }}
@@ -97,5 +97,3 @@ jobs:
         with:
           push: true
           tags: ${{ env.TAG_MAJOR }},${{ env.TAG_MINOR }},${{ env.TAG_PATCH }},${{ env.TAG_LATEST }}
-        env: 
-          GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
