@@ -137,6 +137,8 @@
     "roslynator",
     "RPCs",
     "rref",
+    "sarg",
+    "sarg3nt",
     "sbnumber",
     "semver",
     "Serilog",
