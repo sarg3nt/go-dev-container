@@ -1,4 +1,4 @@
-name: Weekly Release Build and Push
+name: Weekly Release
 
 on:
   schedule:
