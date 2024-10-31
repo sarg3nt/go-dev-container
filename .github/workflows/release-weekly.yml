@@ -97,5 +97,3 @@ jobs:
         with:
           push: true
           tags: ${{ env.TAG_MAJOR }},${{ env.TAG_MINOR }},${{ env.TAG_PATCH }},${{ env.TAG_LATEST }}
-        env: 
-          GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
