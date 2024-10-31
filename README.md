@@ -2,12 +2,13 @@
 # Go Dev Container
 
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/sarg3nt/go-dev-container/badge)](https://scorecard.dev/viewer/?uri=github.com/sarg3nt/go-dev-container)
-[![Scorecard supply-chain security](https://github.com/sarg3nt/go-dev-container/actions/workflows/scorecard.yml/badge.svg)](https://github.com/sarg3nt/go-dev-container/actions/workflows/scorecard.yml)
 [![trivy](https://github.com/sarg3nt/go-dev-container/actions/workflows/trivy.yml/badge.svg)](https://github.com/sarg3nt/go-dev-container/actions/workflows/trivy.yml)
+[![Release](https://github.com/sarg3nt/go-dev-container/actions/workflows/release.yml/badge.svg)](https://github.com/sarg3nt/go-dev-container/actions/workflows/release.yml)
+[![Weekly Release](https://github.com/sarg3nt/go-dev-container/actions/workflows/release-weekly.yml/badge.svg)](https://github.com/sarg3nt/go-dev-container/actions/workflows/release-weekly.yml)  
+[![Scorecard Analyzer](https://github.com/sarg3nt/go-dev-container/actions/workflows/scorecard.yml/badge.svg)](https://github.com/sarg3nt/go-dev-container/actions/workflows/scorecard.yml)
 [![Dependabot Updates](https://github.com/sarg3nt/go-dev-container/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/sarg3nt/go-dev-container/actions/workflows/dependabot/dependabot-updates)
 [![Dependency Review](https://github.com/sarg3nt/go-dev-container/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/sarg3nt/go-dev-container/actions/workflows/dependency-review.yml)
-[![Release](https://github.com/sarg3nt/go-dev-container/actions/workflows/release.yml/badge.svg)](https://github.com/sarg3nt/go-dev-container/actions/workflows/release.yml)
-
+****
 A Go Dev Container using `mise` to install Go and other convenient tools.  
 `mise` can then be used to install various other Go versions as needed.
 
