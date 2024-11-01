@@ -14,6 +14,7 @@ env:
   TAG_MINOR: ""
   TAG_PATCH: ""
   TAG_LATEST: ""
+  TAG_OLD: ""
 
 permissions: read-all
 
@@ -30,17 +31,26 @@ jobs:
         with:
           disable-sudo: true
           egress-policy: audit
+
       - name: 'Checkout Repository'
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           fetch-depth: 0
           fetch-tags: true
 
+      - name: Get Latest Release
+        id: latest-release
+        uses: pozetroninc/github-action-get-latest-release@2a61c339ea7ef0a336d1daa35ef0cb1418e7676c
+        with:
+          repository: sarg3nt/cert-manager-webhook-infoblox-wapi
+          excludes: prerelease, draft
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       # Must generate the tag version manually becuase scheduled workflows do not have access to ref: refs/tags/v1.0.0
       - name: Get the latest tag version
         id: get_version
         run: |
-          latest_version=$(git describe --tags $(git rev-list --tags --max-count=1))
+          latest_version=${{ steps.latest-release.outputs.release }}
           echo "Latest Version: $latest_version"
           if [[ $latest_version =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
             major=${BASH_REMATCH[1]}
@@ -48,13 +58,14 @@ jobs:
             minor=${BASH_REMATCH[2]}
             echo "Minor: $minor"
             patch=${BASH_REMATCH[3]}
-            echo "Patch: $patch"
-            
+            echo "Old Patch: $patch"
             new_patch=$((patch + 1))
+            echo "New Patch: $new_patch"
 
             tag_major=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${major}
             tag_minor=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${major}.${minor}
             tag_patch=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${major}.${minor}.${new_patch}
+            tag_old=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${major}.${minor}.${patch}
             tag_latest=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
             echo "TAG_MAJOR: $tag_major"
@@ -65,6 +76,8 @@ jobs:
             echo "TAG_PATCH=$tag_patch" >> $GITHUB_ENV
             echo "TAG_LATEST: $tag_latest"
             echo "TAG_LATEST=$tag_latest" >> $GITHUB_ENV
+            echo "TAG_OLD: $tag_old"
+            echo "TAG_OLD=$tag_old" >> $GITHUB_ENV
 
             new_version="v${major}.${minor}.${new_patch}"
             echo "New Version: $new_version"
@@ -74,17 +87,9 @@ jobs:
             exit 1
           fi
 
-      # Docs: https://github.com/marketplace/actions/create-release
-      - name: 'Create Release'
-        id: create_release
-        uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5
-        with:
-          body: "A Weekly release contianing upgrades to system packages in the base Rocky Linux container."
-          makeLatest: true
-          prerelease: false
-          tag: ${{ env.VERSION }}
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349
 
- 
       - name: Log into registry
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
         with:
@@ -92,8 +97,41 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build Docker image
+        id: build
+        uses: docker/build-push-action@4f58ea79222b3b9dc2c8bbdd6debcef730109a75
+        with:
+          push: false
+          #cache-to: type=local,dest=/tmp/.buildx-cache
+          tags: ${{ env.TAG_MAJOR }},${{ env.TAG_MINOR }},${{ env.TAG_PATCH }},${{ env.TAG_LATEST }}
+
+      - name: Compare the Old and New Docker Images
+        id: compare_versions
+        run: |
+          docker pull ${{ env.TAG_OLD }}
+          hash_old=$(docker images --no-trunc --quiet ${{ env.TAG_OLD }})
+          hahs_patch=${{steps.build.outputs.imageid}}
+
+          if [ "$hash_patch" == "$hash_old" ]; then
+            echo "There are no changes since the last build. Exiting."
+            exit 0
+          else
+            echo "The new Docker image is different from the old one. Continuing."
+          fi
+
+      - name: Push Docker image
         uses: docker/build-push-action@4f58ea79222b3b9dc2c8bbdd6debcef730109a75
         with:
           push: true
+          #cache-from: type=local,src=/tmp/.buildx-cache
           tags: ${{ env.TAG_MAJOR }},${{ env.TAG_MINOR }},${{ env.TAG_PATCH }},${{ env.TAG_LATEST }}
+
+      # Docs: https://github.com/marketplace/actions/create-release
+      - name: 'Create Release'
+        id: create_release
+        uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5
+        with:
+          body: "A Weekly release containing upgrades to system packages in the base Rocky Linux container."
+          makeLatest: true
+          prerelease: false
+          tag: ${{ env.VERSION }}
