@@ -7,7 +7,7 @@
 # home/vscode/.config/mise/config.toml
 # Add custom Mise tools and version to your projects root as .mist.toml  See: https://mise.jdx.dev/configuration.html
 
-FROM jdxcode/mise@sha256:a9f92f8ddaf6450359cf0fd40fb36dd4e9be8b419a3c17305164497cace8af16 AS mise
+FROM jdxcode/mise@sha256:9c833b397dcac80e567ea1df4d4b30dda975c9860547a10f6d009cb5364c0c53 AS mise
 
 FROM rockylinux:9@sha256:d7be1c094cc5845ee815d4632fe377514ee6ebcf8efaed6892889657e5ddaaa6 AS final
 
