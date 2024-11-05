@@ -38,57 +38,13 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Get Latest Release
-        id: latest-release
-        uses: pozetroninc/github-action-get-latest-release@2a61c339ea7ef0a336d1daa35ef0cb1418e7676c
-        with:
-          repository: sarg3nt/cert-manager-webhook-infoblox-wapi
-          excludes: prerelease, draft
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      # Must generate the tag version manually becuase scheduled workflows do not have access to ref: refs/tags/v1.0.0
-      - name: Get the latest tag version
+      - name: Get the latest version
         id: get_version
-        run: |
-          latest_version=${{ steps.latest-release.outputs.release }}
-          echo "Latest Version: $latest_version"
-          if [[ $latest_version =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
-            major=${BASH_REMATCH[1]}
-            echo "Major: $major"
-            minor=${BASH_REMATCH[2]}
-            echo "Minor: $minor"
-            patch=${BASH_REMATCH[3]}
-            echo "Old Patch: $patch"
-            new_patch=$((patch + 1))
-            echo "New Patch: $new_patch"
-
-            tag_major=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${major}
-            tag_minor=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${major}.${minor}
-            tag_patch=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${major}.${minor}.${new_patch}
-            tag_old=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${major}.${minor}.${patch}
-            tag_latest=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-
-            echo "TAG_MAJOR: $tag_major"
-            echo "TAG_MAJOR=$tag_major" >> $GITHUB_ENV
-            echo "TAG_MINOR: $tag_minor"
-            echo "TAG_MINOR=$tag_minor" >> $GITHUB_ENV
-            echo "TAG_PATCH: $tag_patch"
-            echo "TAG_PATCH=$tag_patch" >> $GITHUB_ENV
-            echo "TAG_LATEST: $tag_latest"
-            echo "TAG_LATEST=$tag_latest" >> $GITHUB_ENV
-            echo "TAG_OLD: $tag_old"
-            echo "TAG_OLD=$tag_old" >> $GITHUB_ENV
-
-            new_version="v${major}.${minor}.${new_patch}"
-            echo "New Version: $new_version"
-            echo "VERSION=$new_version" >> $GITHUB_ENV
-          else
-            echo "Could not determine the latest tag version."
-            exit 1
-          fi
-
-      # - name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349
+        run: bash ${GITHUB_WORKSPACE}/workflow_scripts/get_latest_version.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY: ${{ env.REGISTRY }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
 
       - name: Log into registry
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
@@ -102,33 +58,26 @@ jobs:
         uses: docker/build-push-action@4f58ea79222b3b9dc2c8bbdd6debcef730109a75
         with:
           push: false
-          #cache-to: type=local,dest=/tmp/.buildx-cache
           tags: ${{ env.TAG_MAJOR }},${{ env.TAG_MINOR }},${{ env.TAG_PATCH }},${{ env.TAG_LATEST }}
 
       - name: Compare the Old and New Docker Images
         id: compare_versions
-        run: |
-          docker pull ${{ env.TAG_OLD }}
-          hash_old=$(docker images --no-trunc --quiet ${{ env.TAG_OLD }})
-          hahs_patch=${{steps.build.outputs.imageid}}
-
-          if [ "$hash_patch" == "$hash_old" ]; then
-            echo "There are no changes since the last build. Exiting."
-            exit 0
-          else
-            echo "The new Docker image is different from the old one. Continuing."
-          fi
+        run: bash ${GITHUB_WORKSPACE}/workflow_scripts/compare_containers.sh
+        env:
+          TAG_OLD: ${{ env.TAG_OLD }}
+          TAG_PATCH: ${{ env.TAG_PATCH }}
 
       - name: Push Docker image
+        if: steps.compare_versions.outputs.continue == 'true'
         uses: docker/build-push-action@4f58ea79222b3b9dc2c8bbdd6debcef730109a75
         with:
           push: true
-          #cache-from: type=local,src=/tmp/.buildx-cache
           tags: ${{ env.TAG_MAJOR }},${{ env.TAG_MINOR }},${{ env.TAG_PATCH }},${{ env.TAG_LATEST }}
 
       # Docs: https://github.com/marketplace/actions/create-release
-      - name: 'Create Release'
+      - name: Create Release
         id: create_release
+        if: steps.compare_versions.outputs.continue == 'true'
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5
         with:
           body: "A Weekly release containing upgrades to system packages in the base Rocky Linux container."
