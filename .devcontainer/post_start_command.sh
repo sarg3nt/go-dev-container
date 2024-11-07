@@ -3,6 +3,9 @@ set -euo pipefail
 IFS=$'\n\t'
 
 main() {
+  # $HOME is not set in certain situations and since we will always know the home user in the dev container we hard code it.
+  HOME="/home/vscode"
+
   git_update_diff_tool
   copy_ssh_folder
   copy_kube_config

@@ -8,12 +8,13 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  REPOSITORY: ${{ github.repository }}
   VERSION: ""
   TAG_MAJOR: ""
   TAG_MINOR: ""
   TAG_PATCH: ""
   TAG_LATEST: ""
+  TAG_OLD: ""
 
 permissions: read-all
 
@@ -30,61 +31,21 @@ jobs:
         with:
           disable-sudo: true
           egress-policy: audit
+
       - name: 'Checkout Repository'
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           fetch-depth: 0
           fetch-tags: true
 
-      # Must generate the tag version manually becuase scheduled workflows do not have access to ref: refs/tags/v1.0.0
-      - name: Get the latest tag version
+      - name: Get the latest version
         id: get_version
-        run: |
-          latest_version=$(git describe --tags $(git rev-list --tags --max-count=1))
-          echo "Latest Version: $latest_version"
-          if [[ $latest_version =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
-            major=${BASH_REMATCH[1]}
-            echo "Major: $major"
-            minor=${BASH_REMATCH[2]}
-            echo "Minor: $minor"
-            patch=${BASH_REMATCH[3]}
-            echo "Patch: $patch"
-            
-            new_patch=$((patch + 1))
+        run: bash ${GITHUB_WORKSPACE}/workflow_scripts/get_latest_version.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY: ${{ env.REGISTRY }}
+          REPOSITORY: ${{ env.REPOSITORY }}
 
-            tag_major=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${major}
-            tag_minor=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${major}.${minor}
-            tag_patch=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${major}.${minor}.${new_patch}
-            tag_latest=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-
-            echo "TAG_MAJOR: $tag_major"
-            echo "TAG_MAJOR=$tag_major" >> $GITHUB_ENV
-            echo "TAG_MINOR: $tag_minor"
-            echo "TAG_MINOR=$tag_minor" >> $GITHUB_ENV
-            echo "TAG_PATCH: $tag_patch"
-            echo "TAG_PATCH=$tag_patch" >> $GITHUB_ENV
-            echo "TAG_LATEST: $tag_latest"
-            echo "TAG_LATEST=$tag_latest" >> $GITHUB_ENV
-
-            new_version="v${major}.${minor}.${new_patch}"
-            echo "New Version: $new_version"
-            echo "VERSION=$new_version" >> $GITHUB_ENV
-          else
-            echo "Could not determine the latest tag version."
-            exit 1
-          fi
-
-      # Docs: https://github.com/marketplace/actions/create-release
-      - name: 'Create Release'
-        id: create_release
-        uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5
-        with:
-          body: "A Weekly release contianing upgrades to system packages in the base Rocky Linux container."
-          makeLatest: true
-          prerelease: false
-          tag: ${{ env.VERSION }}
-
- 
       - name: Log into registry
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
         with:
@@ -92,8 +53,34 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build Docker image
+        id: build
+        uses: docker/build-push-action@4f58ea79222b3b9dc2c8bbdd6debcef730109a75
+        with:
+          push: false
+          tags: ${{ env.TAG_MAJOR }},${{ env.TAG_MINOR }},${{ env.TAG_PATCH }},${{ env.TAG_LATEST }}
+
+      - name: Compare the Old and New Docker Images
+        id: compare_versions
+        run: bash ${GITHUB_WORKSPACE}/workflow_scripts/compare_containers.sh
+        env:
+          TAG_OLD: ${{ env.TAG_OLD }}
+          TAG_PATCH: ${{ env.TAG_PATCH }}
+
+      - name: Push Docker image
+        if: steps.compare_versions.outputs.continue == 'true'
         uses: docker/build-push-action@4f58ea79222b3b9dc2c8bbdd6debcef730109a75
         with:
           push: true
           tags: ${{ env.TAG_MAJOR }},${{ env.TAG_MINOR }},${{ env.TAG_PATCH }},${{ env.TAG_LATEST }}
+
+      # Docs: https://github.com/marketplace/actions/create-release
+      - name: Create Release
+        id: create_release
+        if: steps.compare_versions.outputs.continue == 'true'
+        uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5
+        with:
+          body: "A Weekly release containing upgrades to system packages in the base Rocky Linux container."
+          makeLatest: true
+          prerelease: false
+          tag: ${{ env.VERSION }}

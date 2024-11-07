@@ -127,7 +127,6 @@ export PATH="${HOME}/.local:${HOME}/.local/bin:${HOME}/.local/share:$HOME/.local
 
 # List files colors and aliases
 export LS_COLORS=$LS_COLORS:"ow=0;32:"
-# alias ls to lsd, the colorful ls replacement
 alias ls='lsd'
 alias ll='ls -alh'
 alias la='ls -A'
@@ -142,6 +141,32 @@ alias kga="kubectl_get_all"
 alias kx="kubectx"
 alias kn="kubens"
 alias h="helm"
+
+# shellcheck source=/dev/null
+source <(kubectl completion bash)
+complete -o default -F __start_kubectl k
+
+# kx and kn
+_kube_contexts() {
+  local current_arg
+  current_arg=${COMP_WORDS[COMP_CWORD]}
+  # shellcheck disable=SC2207
+  COMPREPLY=($(compgen -W "- $(kubectl config get-contexts --output='name')" -- "$current_arg"))
+}
+_kube_namespaces() {
+  local current_arg
+  current_arg=${COMP_WORDS[COMP_CWORD]}
+  # shellcheck disable=SC2207
+  COMPREPLY=($(compgen -W "- $(kubectl get namespaces -o=jsonpath='{range .items[*].metadata.name}{@}{"\n"}{end}')" -- "$current_arg"))
+}
+
+complete -F _kube_contexts kx
+complete -F _kube_namespaces kn
+
+# shellcheck source=/dev/null
+source <(helm completion bash)
+complete -F __start_helm h
+complete -F __start_helm helm
 
 # Starship
 if [[ -z "${ZSH_THEME}" ]]; then
@@ -163,4 +188,5 @@ eval "$(/usr/local/bin/mise activate zsh)"
 mise trust --all
 mise install --yes
 
+# Run help screen on shell start.
 help

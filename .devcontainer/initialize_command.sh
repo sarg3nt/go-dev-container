@@ -3,6 +3,13 @@ set -euo pipefail
 IFS=$'\n\t'
 
 main() {
+  # Set HOME to the user's home directory if it is not set
+  : "${HOME:=$(eval echo "~${USER}")}"
+  if [[ -z "${HOME}" ]]; then
+    echo "Error: HOME environment variable is not set."
+    exit 1
+  fi
+
   get_latest_dev_container_version
   create_required_folders
 }
@@ -27,15 +34,6 @@ get_latest_dev_container_version() {
 #######################################
 create_required_folders() {
   echo "************** Create any required missing folders if they do not exist ******************"
-  
-  if [[ ! -d "${HOME}" && -d "~/" ]]; then
-    HOME="~/"
-  fi
-
-  if [[ ! -d "${HOME}" ]]; then
-    echo "Error: HOME directory does not exist and cannot be set to ~/."
-    exit 1
-  fi
 
   local directories_created=false
   if [[ ! -d "${HOME}/.docker" ]]; then
