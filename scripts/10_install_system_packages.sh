@@ -3,7 +3,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-# cSpell:ignore epel socat
+# cSpell:ignore epel socat CONFIGUREZSHASDEFAULTSHELL
 
 # Install system packages
 main() {
@@ -67,8 +67,8 @@ main() {
   log "Installing xz zip unzip" "green"
   dnf install -y xz zip unzip
 
-  log "Installing dev containers features" "green"
-  log "Exporting zshell variables" "green"
+  log "Installing dev container features" "blue"
+  log "Exporting dev container featrues install.sh config variables." "green"
   export CONFIGUREZSHASDEFAULTSHELL=true
   export INSTALL_OH_MY_ZSH=true
   export UPGRADEPACKAGES=false
