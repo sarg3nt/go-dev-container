@@ -68,7 +68,7 @@ main() {
   dnf install -y xz zip unzip
 
   log "Installing dev container features" "blue"
-  log "Exporting dev container featrues install.sh config variables." "green"
+  log "Exporting dev container features install.sh config variables." "green"
   export CONFIGUREZSHASDEFAULTSHELL=true
   export INSTALL_OH_MY_ZSH=true
   export UPGRADEPACKAGES=false
