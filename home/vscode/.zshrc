@@ -143,7 +143,7 @@ alias kn="kubens"
 alias h="helm"
 
 # shellcheck source=/dev/null
-source <(kubectl completion bash)
+source <(kubectl completion zsh)
 complete -o default -F __start_kubectl k
 
 # kx and kn
@@ -164,7 +164,7 @@ complete -F _kube_contexts kx
 complete -F _kube_namespaces kn
 
 # shellcheck source=/dev/null
-source <(helm completion bash)
+source <(helm completion zsh)
 complete -F __start_helm h
 complete -F __start_helm helm
 

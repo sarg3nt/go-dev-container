@@ -9,7 +9,7 @@ main() {
   source "/usr/bin/lib/sh/log.sh"
   export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin/:$PATH"
 
-  log "40_install_other_apps.sh" "blue"
+  log "30_install_other_apps.sh" "blue"
 
   add_go_tools
   add_vscode_extensions_cache
@@ -18,20 +18,14 @@ main() {
   install_kubectx_kubens_completions
   install_omz_plugins
   clean_up
-  date >/home/vscode/build_date.txt
+  date +"%B %d %Y" >/home/vscode/build_date.txt
 }
 
 add_go_tools() {
   log "Adding Go Tools" "green"
-  go install "github.com/go-delve/delve/cmd/dlv@v${GO_DELVE_DLV_VERSION}"
-  go install "mvdan.cc/gofumpt@v${GO_FUMPT_VERSION}"
-  # gopls is installed by the go plugin
-  #go install golang.org/x/tools/gopls@latest
-
-  # TODO: Find it if this is still needed and remove if not.
-  #echo "golang:x:999:vscode" | sudo tee -a /etc/group
-  #sudo chgrp -R 999 /go
-  #sudo chmod -R g+rwx /go
+  go install "github.com/go-delve/delve/cmd/dlv@latest"
+  go install "mvdan.cc/gofumpt@latest"
+  go install golang.org/x/tools/gopls@latest
 }
 
 add_vscode_extensions_cache() {

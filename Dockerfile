@@ -1,11 +1,11 @@
 # syntax=docker/dockerfile:1
 
 # See: https://hub.docker.com/r/docker/dockerfile.  Syntax directive must be first line
-# cspell:ignore FUMPT
+# cspell:ignore
 
 # Mise application list and versions are located in
 # home/vscode/.config/mise/config.toml
-# Add custom Mise tools and version to your projects root as .mist.toml  See: https://mise.jdx.dev/configuration.html
+# Add custom Mise tools and version to your projects root as .mise.toml  See: https://mise.jdx.dev/configuration.html
 
 FROM jdxcode/mise@sha256:00d1f5c4c0ac3a74f89400d170fb084d8d415d5cb340b37d3fdf6cb64d17d2d9 AS mise
 
@@ -22,15 +22,8 @@ ENV USERNAME="vscode"
 # Copy script libraries for use by internal scripts
 COPY usr/bin/lib /usr/bin/lib
 
-# COPY scripts directory
-COPY scripts /scripts
-
 # Install packages using the dnf package manager
-RUN /scripts/10_install_system_packages.sh
-
-# Install the devcontainers features common-utils scripts from https://github.com/devcontainers/features
-# Installs common utilities and the USERNAME user as a non root user
-RUN /scripts/20_install_microsoft_dev_container_features.sh
+RUN --mount=type=bind,source=scripts/10_install_system_packages.sh,target=/10.sh,ro bash -c "/10.sh"
 
 # Set current user to the vscode user, run all future commands as this user.
 USER vscode
@@ -38,28 +31,17 @@ USER vscode
 # Copy the mise binary from the mise container
 COPY --from=mise /usr/local/bin/mise /usr/local/bin/mise
 
-# Install applications that are scoped to the vscode user
-RUN sudo chown vscode /scripts 
-
 # Copy just files needed for mise from /home.
 COPY --chown=vscode:vscode home/vscode/.config/mise /home/vscode/.config/mise
 
-# These are only used in 30_install_mise.sh so do not need to be ENV vars.
+# These are only used in 30_install_mise_packages.sh so do not need to be ENV vars.
 ARG MISE_VERBOSE=0
 ARG RUST_BACKTRACE=0
-# https://github.com/jdx/mise/releases
-RUN /scripts/30_install_mise_packages.sh
+RUN --mount=type=bind,source=scripts/20_install_mise_packages.sh,target=/20.sh,ro bash -c "/20.sh"
 
-# https://github.com/go-delve/delve/releases
-ARG GO_DELVE_DLV_VERSION="1.23.1"
-# https://github.com/mvdan/gofumpt/releases
-ARG GO_FUMPT_VERSION="0.7.0"
-RUN /scripts/40_install_other_apps.sh
-
-RUN sudo rm -rf /scripts
+RUN --mount=type=bind,source=scripts/30_install_other_apps.sh,target=/30.sh,ro bash -c "/30.sh"
 
 COPY --chown=vscode:vscode home /home/
-
 COPY usr /usr
 
 # VS Code by default overrides ENTRYPOINT and CMD with default values when executing `docker run`.
