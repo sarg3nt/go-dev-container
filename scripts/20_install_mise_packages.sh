@@ -31,6 +31,24 @@ main() {
 
   log "Deleting files from /tmp" "green"
   sudo rm -rf /tmp/*
+
+  log "Cleaning go caches" "green"
+  go clean -cache
+  go clean -testcache
+  go clean -fuzzcache
+  go clean -modcache
+
+  log "Deleting all .git directories." "green"
+  find / -path /proc -prune -o -type d -name ".git" -not -path '/.git' -exec rm -rf {} + 2>/dev/null || true
+  rm -rf /etc/machine-id
+  rm -rf /var/log/dnf.librepo.log
+  rm -rf /var/log/dnf.log
+  rm -rf /var/log/dnf.rpm.log
+  rm -rf /var/log/hawkey.log 
+  rm -rf /home/vscode/.cache/go-build/trim.txt
+  rm -rf /home/vscode/.cache/go-build/testexpire.txt 
+  rm -rf /home/vscode/.config/go/telemetry/*
+  rm -rf /home/vscode/go/pkg/sumdb/sum.golang.org/latest
 }
 
 # Run main

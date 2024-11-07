@@ -15,6 +15,12 @@ LABEL org.opencontainers.image.source=https://github.com/sarg3nt/go-dev-containe
 
 ENV TZ='America/Los_Angeles'
 
+# Define the build argument
+ARG GITHUB_API_TOKEN
+
+# Set the build argument as an environment variable
+ENV GITHUB_API_TOKEN=${GITHUB_API_TOKEN}
+
 # What user will be created in the dev container and will we run under.
 # Reccomend not changing this.
 ENV USERNAME="vscode"

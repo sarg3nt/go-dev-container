@@ -96,6 +96,18 @@ main() {
 
   log "Deleting files from /tmp" "green"
   rm -rf /tmp/*
+  log "Deleting all .git directories." "green"
+  sudo find / -path /proc -prune -o -type d -name ".git" -not -path '/.git' -exec rm -rf {} + 2>/dev/null || true
+  log "Deleting /etc/machine-id." "green"
+  sudo rm -rf /etc/machine-id
+  log "Deleting /var/log/dnf.librepo.log." "green"
+  sudo rm -rf /var/log/dnf.librepo.log
+  log "Deleting /var/log/dnf.log." "green"
+  sudo rm -rf /var/log/dnf.log
+  log "Deleting /var/log/dnf.rpm.log." "green"
+  sudo rm -rf /var/log/dnf.rpm.log
+  log "Deleting /var/log/hawkey.log." "green"
+  sudo rm -rf /var/log/hawkey.log
 }
 
 # Run main
