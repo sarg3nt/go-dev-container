@@ -16,7 +16,8 @@ env:
   TAG_LATEST: ""
   TAG_OLD: ""
 
-permissions: read-all
+permissions: 
+  contents: read
 
 jobs:
   release-build-and-push:

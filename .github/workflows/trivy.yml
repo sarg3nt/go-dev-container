@@ -28,7 +28,6 @@ jobs:
     permissions:
       contents: write # for actions/checkout to fetch code and for SBOM to push results
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
     runs-on: ubuntu-latest
     steps:
       - name: Harden Runner
@@ -70,23 +69,3 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
 
-      - name: Generate SBOM with Trivy
-        uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2
-        with:
-          image-ref: '${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ github.sha }}'
-          scan-type: image
-          format: 'github'
-          output: 'dependency-results.sbom.json'
-          github-pat: ${{ secrets.GITHUB_TOKEN }}
-          severity: "HIGH,CRITICAL"
-          scanners: "vuln"
-        env:
-          TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db,public.ecr.aws/aquasecurity/trivy-db
-          TRIVY_SKIP_JAVA_DB_UPDATE: true
-
-      - name: Upload SBOM to GitHub
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
-        with:
-          name: trivy-sbom-report
-          path: '${{ github.workspace }}/dependency-results.sbom.json'
-          retention-days: 30 # 90 is the default
