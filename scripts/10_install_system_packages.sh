@@ -67,6 +67,27 @@ main() {
   log "Installing xz zip unzip" "green"
   dnf install -y xz zip unzip
 
+  log "Installing dev containers features" "green"
+  log "Exporting zshell variables" "green"
+  export CONFIGUREZSHASDEFAULTSHELL=true
+  export INSTALL_OH_MY_ZSH=true
+  export UPGRADEPACKAGES=false
+
+  log "Making /tmp/source directory" "green"
+  mkdir /tmp/source
+  cd /tmp/source
+
+  log "Cloning devcontainers features repository" "green"
+  git clone --depth 1 -- https://github.com/devcontainers/features.git
+
+  log "Running install script" "green"
+  cd /tmp/source/features/src/common-utils/
+  ./install.sh
+  cd -
+
+  dnf -y remove epel-release
+  dnf -y remove dnf-plugins-core
+
   log "Running dnf autoremove" "green"
   dnf autoremove -y
 

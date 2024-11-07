@@ -22,15 +22,8 @@ ENV USERNAME="vscode"
 # Copy script libraries for use by internal scripts
 COPY usr/bin/lib /usr/bin/lib
 
-# COPY scripts directory
-COPY scripts /scripts
-
 # Install packages using the dnf package manager
-RUN /scripts/10_install_system_packages.sh
-
-# Install the devcontainers features common-utils scripts from https://github.com/devcontainers/features
-# Installs common utilities and the USERNAME user as a non root user
-RUN /scripts/20_install_microsoft_dev_container_features.sh
+RUN --mount=type=bind,source=scripts/10_install_system_packages.sh,target=/10.sh,ro bash -c "/10.sh"
 
 # Set current user to the vscode user, run all future commands as this user.
 USER vscode
@@ -38,23 +31,17 @@ USER vscode
 # Copy the mise binary from the mise container
 COPY --from=mise /usr/local/bin/mise /usr/local/bin/mise
 
-# Install applications that are scoped to the vscode user
-RUN sudo chown vscode /scripts 
-
 # Copy just files needed for mise from /home.
 COPY --chown=vscode:vscode home/vscode/.config/mise /home/vscode/.config/mise
 
 # These are only used in 30_install_mise_packages.sh so do not need to be ENV vars.
 ARG MISE_VERBOSE=0
 ARG RUST_BACKTRACE=0
-RUN /scripts/30_install_mise_packages.sh
+RUN --mount=type=bind,source=scripts/20_install_mise_packages.sh,target=/20.sh,ro bash -c "/20.sh"
 
-RUN /scripts/40_install_other_apps.sh
-
-RUN sudo rm -rf /scripts
+RUN --mount=type=bind,source=scripts/30_install_other_apps.sh,target=/30.sh,ro bash -c "/30.sh"
 
 COPY --chown=vscode:vscode home /home/
-
 COPY usr /usr
 
 # VS Code by default overrides ENTRYPOINT and CMD with default values when executing `docker run`.

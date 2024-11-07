@@ -9,7 +9,7 @@ main() {
   source "/usr/bin/lib/sh/log.sh"
   export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin/:$PATH"
 
-  log "40_install_other_apps.sh" "blue"
+  log "30_install_other_apps.sh" "blue"
 
   add_go_tools
   add_vscode_extensions_cache

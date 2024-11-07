@@ -7,7 +7,7 @@ main() {
   source "/usr/bin/lib/sh/log.sh"
 
   ############ Install mise
-  log "30_install_mise_packages.sh" "blue"
+  log "20_install_mise_packages.sh" "blue"
 
   # Mise is installed in the docker file from it's master docker branch.
   log "Configuring mise" "green"
