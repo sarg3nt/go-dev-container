@@ -44,16 +44,11 @@ RUN sudo chown vscode /scripts
 # Copy just files needed for mise from /home.
 COPY --chown=vscode:vscode home/vscode/.config/mise /home/vscode/.config/mise
 
-# These are only used in 30_install_mise.sh so do not need to be ENV vars.
+# These are only used in 30_install_mise_packages.sh so do not need to be ENV vars.
 ARG MISE_VERBOSE=0
 ARG RUST_BACKTRACE=0
-# https://github.com/jdx/mise/releases
 RUN /scripts/30_install_mise_packages.sh
 
-# https://github.com/go-delve/delve/releases
-ARG GO_DELVE_DLV_VERSION="1.23.1"
-# https://github.com/mvdan/gofumpt/releases
-ARG GO_FUMPT_VERSION="0.7.0"
 RUN /scripts/40_install_other_apps.sh
 
 RUN sudo rm -rf /scripts

@@ -1,3 +1,4 @@
+[tools]
 # See: https://mise.jdx.dev/configuration.html for config options.
 # NOTE: Top level tools are installed in home/vscode/config/mise/config.toml during setup.
 #[env]

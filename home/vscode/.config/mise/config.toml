@@ -8,6 +8,7 @@ golangci-lint = 'latest'
 goreleaser = 'latest'
 bat = 'latest'
 fzf = "latest"
+gh = "latest"
 gitui = "latest"
 helm = "latest"
 k9s = "latest"
