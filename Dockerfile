@@ -1,11 +1,11 @@
 # syntax=docker/dockerfile:1
 
 # See: https://hub.docker.com/r/docker/dockerfile.  Syntax directive must be first line
-# cspell:ignore FUMPT
+# cspell:ignore
 
 # Mise application list and versions are located in
 # home/vscode/.config/mise/config.toml
-# Add custom Mise tools and version to your projects root as .mist.toml  See: https://mise.jdx.dev/configuration.html
+# Add custom Mise tools and version to your projects root as .mise.toml  See: https://mise.jdx.dev/configuration.html
 
 FROM jdxcode/mise@sha256:412a4b0c307116a7e338aebba5ea3c620bcc3d6d3106ca61f24295a945874bb9 AS mise
 
