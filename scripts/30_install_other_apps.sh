@@ -17,7 +17,7 @@ main() {
   add_fzf_completions_files
   install_kubectx_kubens_completions
   install_omz_plugins
-  clean_up
+  cleanup
   date +"%B %d %Y" >/home/vscode/build_date.txt
 }
 
@@ -66,10 +66,41 @@ install_omz_plugins() {
   git clone --depth 1 -- https://github.com/zsh-users/zsh-completions.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-completions"
 }
 
-clean_up() {
-  echo ""
+cleanup() {
+  log "Running cleanup" "blue"
   log "Deleting files from /tmp" "green"
-  sudo rm -rf /tmp/*
+  sudo rm -rfv /tmp/*
+  echo ""
+
+  log "Cleaning go caches" "green"
+  go clean -cache
+  go clean -testcache
+  go clean -fuzzcache
+  go clean -modcache
+  echo ""
+
+  log "Deleting all .git directories." "green"
+  find / -path /proc -prune -o -type d -name ".git" -not -path '/.git' -exec rm -rfv {} + 2>/dev/null || true
+  echo ""
+
+  log "Clearing mise cache." "green"
+  mise cache clear
+  echo ""
+
+  log "Deleting go cache files" "green"
+  sudo rm -rfv /home/vscode/.cache/go-build/trim.txt
+  sudo rm -rfv /home/vscode/.cache/go-build/testexpire.txt
+  sudo rm -rfv /home/vscode/.config/go/telemetry/*
+  sudo rm -rfv /home/vscode/go/pkg/sumdb/sum.golang.org/latest
+  echo ""
+
+  log "Deleting all data in /var/log" "green"
+  sudo rm -rfv /var/log/*
+  echo ""
+
+  log "Delete Python cache files" "green"
+  sudo find / -name "__pycache__" -type d -exec rm -rfv {} + 2>/dev/null || true
+  sudo find / -name "*.pyc" -exec rm -fv {} + 2>/dev/null || true
 }
 
 # Run main

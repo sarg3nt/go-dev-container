@@ -5,7 +5,11 @@ CURRENT_DIR := $(shell pwd)
 
 .PHONY: build
 build:
-	docker build -t "$(IMAGE_NAME):$(IMAGE_TAG)-$(GIT_BRANCH)" .
+	docker build --build-arg GITHUB_API_TOKEN=${GITHUB_TOKEN} -t "$(IMAGE_NAME):$(IMAGE_TAG)-$(GIT_BRANCH)" .
+
+.PHONY: build-no-cache
+build-no-cache:
+	docker build --build-arg GITHUB_API_TOKEN=${GITHUB_TOKEN} --progress=plain --no-cache -t "$(IMAGE_NAME):$(IMAGE_TAG)-$(GIT_BRANCH)" .
 
 .PHONY: run
 run:

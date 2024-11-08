@@ -15,6 +15,10 @@ LABEL org.opencontainers.image.source=https://github.com/sarg3nt/go-dev-containe
 
 ENV TZ='America/Los_Angeles'
 
+# Here for local builds, not used for main pipeline as the security tools gets snippy.
+# ARG GITHUB_API_TOKEN
+# ENV GITHUB_API_TOKEN=${GITHUB_API_TOKEN}
+
 # What user will be created in the dev container and will we run under.
 # Reccomend not changing this.
 ENV USERNAME="vscode"
@@ -38,7 +42,6 @@ COPY --chown=vscode:vscode home/vscode/.config/mise /home/vscode/.config/mise
 ARG MISE_VERBOSE=0
 ARG RUST_BACKTRACE=0
 RUN --mount=type=bind,source=scripts/20_install_mise_packages.sh,target=/20.sh,ro bash -c "/20.sh"
-
 RUN --mount=type=bind,source=scripts/30_install_other_apps.sh,target=/30.sh,ro bash -c "/30.sh"
 
 COPY --chown=vscode:vscode home /home/

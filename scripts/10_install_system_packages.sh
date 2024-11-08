@@ -8,19 +8,23 @@ IFS=$'\n\t'
 # Install system packages
 main() {
   source "/usr/bin/lib/sh/log.sh"
+  install_system_packages
+  install_devcontainer_features
+  cleanup
+}
+
+install_system_packages() {
   log "10_install_system_packages.sh" "blue"
 
   log "Adding install_weak_deps=False to /etc/dnf/dnf.conf" "green"
   echo "install_weak_deps=False" >>/etc/dnf/dnf.conf
+  echo "keepcache=0" >>/etc/dnf/dnf.conf
 
   log "Installing epel release" "green"
   dnf install -y epel-release && dnf clean all
 
   log "Installing dnf plugins core" "green"
   dnf install -y dnf-plugins-core
-
-  log "Running /usr/bin/crb enable" "green"
-  /usr/bin/crb enable
 
   log "Adding docker ce repo" "green"
   dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
@@ -66,7 +70,9 @@ main() {
 
   log "Installing xz zip unzip" "green"
   dnf install -y xz zip unzip
+}
 
+install_devcontainer_features() {
   log "Installing dev container features" "blue"
   log "Exporting dev container features install.sh config variables." "green"
   export CONFIGUREZSHASDEFAULTSHELL=true
@@ -84,18 +90,34 @@ main() {
   cd /tmp/source/features/src/common-utils/
   ./install.sh
   cd -
+}
 
-  dnf -y remove epel-release
-  dnf -y remove dnf-plugins-core
-
-  log "Running dnf autoremove" "green"
-  dnf autoremove -y
-
-  log "Running dnf clean all" "green"
-  dnf clean all
+cleanup() {
+  log "Running cleanup" "blue"
 
   log "Deleting files from /tmp" "green"
-  rm -rf /tmp/*
+  sudo rm -rfv /tmp/*
+  echo ""
+
+  log "Deleting all .git directories." "green"
+  find / -path /proc -prune -o -type d -name ".git" -not -path '/.git' -exec rm -rfv {} + 2>/dev/null || true
+  echo ""
+
+  log "Running dnf autoremove" "green"
+  sudo dnf autoremove -y
+  echo ""
+
+  log "Running dnf clean all" "green"
+  sudo dnf clean all
+  echo ""
+
+  log "Deleting all data in /var/log" "green"
+  sudo rm -rfv /var/log/*
+  echo ""
+
+  log "Delete Python cache files" "green"
+  sudo find / -name "__pycache__" -type d -exec rm -rfv {} + 2>/dev/null || true
+  sudo find / -name "*.pyc" -exec rm -fv {} + 2>/dev/null || true
 }
 
 # Run main
