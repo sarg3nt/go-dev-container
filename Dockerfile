@@ -44,7 +44,6 @@ COPY --chown=vscode:vscode home/vscode/.config/mise /home/vscode/.config/mise
 ARG MISE_VERBOSE=0
 ARG RUST_BACKTRACE=0
 RUN --mount=type=bind,source=scripts/20_install_mise_packages.sh,target=/20.sh,ro bash -c "/20.sh"
-
 RUN --mount=type=bind,source=scripts/30_install_other_apps.sh,target=/30.sh,ro bash -c "/30.sh"
 
 COPY --chown=vscode:vscode home /home/

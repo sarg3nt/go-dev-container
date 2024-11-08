@@ -17,8 +17,8 @@ main() {
   add_fzf_completions_files
   install_kubectx_kubens_completions
   install_omz_plugins
-  clean_up
-  date +"%B %d %Y" >/home/vscode/build_date.txt
+  cleanup
+  #date +"%B %d %Y" >/home/vscode/build_date.txt
 }
 
 add_go_tools() {
@@ -66,7 +66,7 @@ install_omz_plugins() {
   git clone --depth 1 -- https://github.com/zsh-users/zsh-completions.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-completions"
 }
 
-clean_up() {
+cleanup() {
   echo ""
   log "Deleting files from /tmp" "green"
   sudo rm -rf /tmp/*
@@ -79,15 +79,22 @@ clean_up() {
 
   log "Deleting all .git directories." "green"
   find / -path /proc -prune -o -type d -name ".git" -not -path '/.git' -exec rm -rf {} + 2>/dev/null || true
-  rm -rf /etc/machine-id
-  rm -rf /var/log/dnf.librepo.log
-  rm -rf /var/log/dnf.log
-  rm -rf /var/log/dnf.rpm.log
-  rm -rf /var/log/hawkey.log
-  rm -rf /home/vscode/.cache/go-build/trim.txt
-  rm -rf /home/vscode/.cache/go-build/testexpire.txt
-  rm -rf /home/vscode/.config/go/telemetry/*
-  rm -rf /home/vscode/go/pkg/sumdb/sum.golang.org/latest
+
+  log "Clearing mise cache." "green"
+  mise cache clear
+
+  log "Deleting go cache files" "green"
+  sudo rm -rf /home/vscode/.cache/go-build/trim.txt
+  sudo rm -rf /home/vscode/.cache/go-build/testexpire.txt
+  sudo rm -rf /home/vscode/.config/go/telemetry/*
+  sudo rm -rf /home/vscode/go/pkg/sumdb/sum.golang.org/latest
+
+  log "Deleting all data in /var/log" "green"
+  sudo rm -rf /var/log/*
+
+  log "Delete Python cache files" "green"
+  sudo find / -name "__pycache__" -type d -exec rm -r {} + 2>/dev/null || true
+  sudo find / -name "*.pyc" -exec rm -f {} + 2>/dev/null || true
 }
 
 # Run main

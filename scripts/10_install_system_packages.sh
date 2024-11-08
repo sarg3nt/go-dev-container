@@ -8,19 +8,23 @@ IFS=$'\n\t'
 # Install system packages
 main() {
   source "/usr/bin/lib/sh/log.sh"
+  install_system_packages
+  install_devcontainer_features
+  cleanup
+}
+
+install_system_packages() {
   log "10_install_system_packages.sh" "blue"
 
   log "Adding install_weak_deps=False to /etc/dnf/dnf.conf" "green"
   echo "install_weak_deps=False" >>/etc/dnf/dnf.conf
+  echo "keepcache=0" >>/etc/dnf/dnf.conf
 
   log "Installing epel release" "green"
   dnf install -y epel-release && dnf clean all
 
   log "Installing dnf plugins core" "green"
   dnf install -y dnf-plugins-core
-
-  log "Running /usr/bin/crb enable" "green"
-  /usr/bin/crb enable
 
   log "Adding docker ce repo" "green"
   dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
@@ -66,7 +70,9 @@ main() {
 
   log "Installing xz zip unzip" "green"
   dnf install -y xz zip unzip
+}
 
+install_devcontainer_features() {
   log "Installing dev container features" "blue"
   log "Exporting dev container features install.sh config variables." "green"
   export CONFIGUREZSHASDEFAULTSHELL=true
@@ -84,30 +90,53 @@ main() {
   cd /tmp/source/features/src/common-utils/
   ./install.sh
   cd -
+}
 
-  dnf -y remove epel-release
-  dnf -y remove dnf-plugins-core
+cleanup() {
+  #dnf -y remove epel-release
+  #dnf -y remove dnf-plugins-core
+
+  echo ""
+  log "Deleting files from /tmp" "green"
+  sudo rm -rf /tmp/*
+
+  log "Deleting all .git directories." "green"
+  find / -path /proc -prune -o -type d -name ".git" -not -path '/.git' -exec rm -rf {} + 2>/dev/null || true
 
   log "Running dnf autoremove" "green"
-  dnf autoremove -y
+  sudo dnf autoremove -y
 
   log "Running dnf clean all" "green"
-  dnf clean all
+  sudo dnf clean all
 
-  log "Deleting files from /tmp" "green"
-  rm -rf /tmp/*
-  log "Deleting all .git directories." "green"
-  sudo find / -path /proc -prune -o -type d -name ".git" -not -path '/.git' -exec rm -rf {} + 2>/dev/null || true
   log "Deleting /etc/machine-id." "green"
   sudo rm -rf /etc/machine-id
-  log "Deleting /var/log/dnf.librepo.log." "green"
-  sudo rm -rf /var/log/dnf.librepo.log
-  log "Deleting /var/log/dnf.log." "green"
-  sudo rm -rf /var/log/dnf.log
-  log "Deleting /var/log/dnf.rpm.log." "green"
-  sudo rm -rf /var/log/dnf.rpm.log
-  log "Deleting /var/log/hawkey.log." "green"
-  sudo rm -rf /var/log/hawkey.log
+
+  log "Deleting /etc/pki/ca-trust/extracted/java/cacerts." "green"
+  sudo rm -rf /etc/pki/ca-trust/extracted/java/cacerts
+
+  log "Deleting /var/cache/ldconfig/aux-cache" "green"
+  sudo rm -rf /var/cache/ldconfig/aux-cache
+
+  log "Deleting dnf data" "green"
+  sudo rm -rf /var/lib/dnf/repos/*
+  sudo rm -rf /var/lib/dnf/history.sqlite-shm
+  sudo rm -rf /var/lib/dnf/history.sqlite
+  sudo rm -rf /var/lib/dnf/history.sqlite-wal
+
+  log "Cleaning RPM database files" "green"
+  sudo rm -f /var/lib/rpm/*
+  #sudo rm -f /var/lib/rpm/__db.*
+  #sudo rm -f /var/lib/rpm/Packages
+  #sudo rm -f /var/lib/rpm/rpmdb.sqlite 2>/dev/null || true
+  sudo rpm --initdb
+
+  log "Deleting all data in /var/log" "green"
+  sudo rm -rf /var/log/*
+
+  log "Delete Python cache files" "green"
+  sudo find / -name "__pycache__" -type d -exec rm -r {} + 2>/dev/null || true
+  sudo find / -name "*.pyc" -exec rm -f {} + 2>/dev/null || true
 }
 
 # Run main
