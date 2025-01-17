@@ -64,7 +64,7 @@ jobs:
       # Docs: https://github.com/marketplace/actions/create-release
       - name: Create Release
         id: create_release
-        uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5
+        uses: ncipollo/release-action@cdcc88a9acf3ca41c16c37bb7d21b9ad48560d87
         with:
           body: "A Weekly release containing upgrades to system packages in the base Rocky Linux container."
           makeLatest: true
