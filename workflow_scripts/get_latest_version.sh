@@ -14,17 +14,13 @@ main() {
     exit 1
   fi
 
-  echo "Getting latest tag using gh and the GitHub API"
-  latest_version=$(gh api "/repos/${REPOSITORY}/tags" |
-    jq -r '[.[] | select(.name | startswith("v"))] | sort_by(.name) | reverse | .[0].name')
-  echo "Latest Version: $latest_version"
-  # TODO: try to use releases/latest instead of tags
-  latest_version_from_releases=$(gh api "/repos/${REPOSITORY}/releases/latest" | jq -r '.tag_name')
-  echo "Latest Version from Releases: $latest_version_from_releases  This is test output to see if this method is stable.  If so, switch to it."
+  latest_version=$(gh api "/repos/${REPOSITORY}/releases/latest" | jq -r '.tag_name')
+  echo "Latest Version from Releases: $latest_version"
   # Github runner does not print empty echos. :(
   echo "-"
 
   echo "Finding the latest tag version and setting major, minor, patch and new_patch."
+  # This auto populates the special env var BASH_REMATCH with Bash magic.
   if [[ ! $latest_version =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
     echo "Could not determine the latest tag version."
     exit 1
