@@ -1,40 +1,31 @@
+# cspell:ignore gitui kubectx
 # See: https://mise.jdx.dev/configuration.html for config options.
 [env]
 # supports arbitrary env vars so mise can be used like direnv/dotenv
 
 [tools]
+####### Pinned versions
+kubectl = "1.31"
+
+######### Latest versions
+bat = "latest"
+fzf = "latest"
 golang = 'latest'
 golangci-lint = 'latest'
 goreleaser = 'latest'
-bat = 'latest'
-fzf = "latest"
 gh = "latest"
-#gitui = "latest"
+gitui = "latest"
 helm = "latest"
 k9s = "latest"
-kubectl = "latest"
 kubectx = "latest"
 lsd = "latest"
 starship = "latest"
 yq = "latest"
 
-[plugins]
-# specify a custom repo url
-# note this will only be used if the plugin does not already exist
-golangci-ling = "https://github.com/hypnoglow/asdf-golangci-lint"
-goreleaser = "https://github.com/kforsthoevel/asdf-goreleaser"
-bat = "https://gitlab.com/wt0f/asdf-bat"
-fzf = "https://github.com/kompiro/asdf-fzf"
-gitui = "https://github.com/looztra/asdf-gitui"
-helm = "https://github.com/Antiarchitect/asdf-helm"
-k9s = "https://github.com/looztra/asdf-k9s"
-kubectl = 'https://github.com/asdf-community/asdf-kubectl'
-kubectx = "https://gitlab.com/wt0f/asdf-kubectx"
-lsd = "https://github.com/mise-plugins/asdf-lsd"
-starship = "https://github.com/gr1m0h/asdf-starship"
-yq = "https://github.com/sudermanjr/asdf-yq"
 
 [settings]
 experimental = true
-
+#http_timeout = "90s"
+#jobs = 1
+#yes = true
 trusted_config_paths = ['/workspaces/']

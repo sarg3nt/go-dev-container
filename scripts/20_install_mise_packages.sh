@@ -24,6 +24,7 @@ install_mise_packages() {
 
   log "Installing tools with mise" "green"
   mise install --yes
+  log "Mise tool install complete" "green"
 }
 
 cleanup() {
