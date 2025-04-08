@@ -11,6 +11,16 @@ on:
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ "main" ]
+    paths:
+      - 'home/**'
+      - 'scripts/**'
+      - 'usr/**'
+      - 'workflow_scripts/**'
+      - '.dockerignore'
+      - '.mise.toml'
+      - '.pre-commit-config.yaml'
+      - 'Dockerfile'
+
   schedule:
     - cron: '19 14 * * 5'
   workflow_dispatch: # Allows manual triggering
