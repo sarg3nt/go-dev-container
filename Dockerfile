@@ -7,9 +7,12 @@
 # home/vscode/.config/mise/config.toml
 # Add custom Mise tools and version to your projects root as .mise.toml  See: https://mise.jdx.dev/configuration.html
 
+# https://hub.docker.com/r/jdxcode/mise/tags
+# This is latest.
 FROM jdxcode/mise@sha256:d96bfd0a61c6c6e377e2a8ed90725ff5c115d08d44346c9351251401aae9f376 AS mise
 
-FROM rockylinux:9@sha256:d7be1c094cc5845ee815d4632fe377514ee6ebcf8efaed6892889657e5ddaaa6 AS final
+# https://hub.docker.com/r/rockylinux/rockylinux/tags
+FROM rockylinux/rockylinux:9-ubil@sha256:a475955a742ea1e3f83d5765aec206804a714c9b654d17b691c9c17a5da02c8f AS final
 
 LABEL org.opencontainers.image.source=https://github.com/sarg3nt/go-dev-container
 
