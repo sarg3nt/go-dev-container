@@ -9,7 +9,7 @@
 
 # https://hub.docker.com/r/jdxcode/mise/tags
 # This is latest.
-FROM jdxcode/mise@sha256:d96bfd0a61c6c6e377e2a8ed90725ff5c115d08d44346c9351251401aae9f376 AS mise
+FROM jdxcode/mise@sha256:661a7c2eb32808ec10e4e7b82d6d9c5c0634c0f794dad67ecbfd361be791068a AS mise
 
 # https://hub.docker.com/r/rockylinux/rockylinux/tags
 FROM rockylinux/rockylinux:9-ubil@sha256:a475955a742ea1e3f83d5765aec206804a714c9b654d17b691c9c17a5da02c8f AS final
