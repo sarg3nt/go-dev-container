@@ -164,6 +164,8 @@ Download your chosen font and [install it in Windows](https://support.microsoft.
 
 ### Linux Font Install
 
+This is not necessary when running VSCode in WSL on Windows, however if you are running things natively in Linux you will need to install the fonts in Linux.
+
 See [How to Install New (or Nerd) Fonts on Linux (Ultimate Guide)](https://linuxtldr.com/install-fonts-on-linux/) for instructions.
 
 ### Visual Studio Code Font Setup
