@@ -9,7 +9,7 @@
 [![Dependabot Updates](https://github.com/sarg3nt/go-dev-container/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/sarg3nt/go-dev-container/actions/workflows/dependabot/dependabot-updates)
 [![Dependency Review](https://github.com/sarg3nt/go-dev-container/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/sarg3nt/go-dev-container/actions/workflows/dependency-review.yml)
 ****
-A Go Dev Container using `mise` to install Go and other convenient tools.  
+A Go Dev Container using [mise](https://mise.jdx.dev/) to install Go and other convenient tools.  
 `mise` can then be used to install various other Go versions as needed.
 
 - [Using the Go Dev Container](#using-the-go-dev-container)
@@ -60,6 +60,9 @@ See the base `mise` config file at `home/vscode/.config/mise/config.toml` for al
 
 ## Using `mise` to Manage Go Versions
 
+[mise](https://mise.jdx.dev/) is a development environment setup tool based on `asdf` but much faster.  
+See the [mise about](https://mise.jdx.dev/about.html) page for more information.
+
 1. Copy the `.mise.toml` file from the root of this repo to your project's root and modify it as needed.
 1. The provided `.devcontainer` will automatically call `mise install` to install the custom versions of the applications.
 1. After the container is started and you exec into it, `mise` will automatically install the app versions listed in the `.mise.toml` file.
@@ -86,7 +89,8 @@ We've included an `install.sh` script to automate the process of copying the abo
 
 The script must be ran from the root of the `go-dev-container` project.  
 
-**Example:**  `./install.sh ~/src/my-go-project`
+> [!EXAMPLE]  
+> `./install.sh ~/src/my-go-project`
 
 ### Dev Container Setup
 
@@ -99,11 +103,13 @@ Edit the `devcontainer.json` file to make the following changes.
 - Change `source=go-dev-container-bashhistory` to `source=<YOUR-PROJECT>-bashhistory`
 - Change `source=go-dev-container-plugins` to `source=<YOUR-PROJECT>-plugins`
 
-> **NOTE:** You may be tempted to find and replace `go-dev-container` with the name of your project, however the `image` for the container is called `go-dev-container` so that would break things.  If you want to do a controlled replacement you can, just be careful not to replace that one line.
+> [!NOTE]  
+> You may be tempted to find and replace `go-dev-container` with the name of your project, however the `image` for the container is called `go-dev-container` so that would break things.  If you want to do a controlled replacement you can, just be careful not to replace that one line.
 
 ### `dev.sh`
 
-This script is used to easily start VSCode and exec into the Dev Container from the terminal that it is ran from.  This frees the developer from having to use the VSCode integrated terminal.  
+This script is used to easily start VSCode and exec into the Dev Container from the terminal that it is ran from.  
+This frees the developer from having to use the VSCode integrated terminal.  
 
 You can run `dev.sh` in multiple terminals once VSCode is running and the container has started to easily exec into it.
 
@@ -111,11 +117,10 @@ You can run `dev.sh` in multiple terminals once VSCode is running and the contai
 - Change `project_name` to match the name of the repository.  
   **Example:** If your root project repository is called `my-go-project` then set `project_name` to `my-go-project`
 
-To use the `./dev.sh` script, simply run it, then when VS Code opens, there should be a prompt at the bottom right of the editor saying "Folder contains a Dev Container . . .".  Click the "Reopen in Container" button and VS Code will open the dev container and attach to it.
+To use the `./dev.sh` script, simply run it.  It will automatically open the dev container once VSCode starts.
 
-<img src="images/reopen-in-container.png" alt="Reopen in Container" width="400"/>
-
-> **NOTE:** If you have not opened the dev container before or if it has been updated it will download the container from Github, which can take a while.
+> [!NOTE]
+> If you have not opened the dev container before or if it has been updated it will download the container from Github, which can take a while.
 
 ## Starship 
 
@@ -169,7 +174,8 @@ The fonts must be installed in your operating system to be used in VSCode.  If y
 1. Expand `Text Editor` --> select `Font`
 1. In the `Font Family` text box paste the following:  
 
-    > **NOTE:** This assumes you chose "FiraCode NF", if not, replace the first font name with the name of the font you installed in Windows.
+    > [!NOTE]  
+    > This assumes you chose "FiraCode NF", if not, replace the first font name with the name of the font you installed in Windows.
 
    ```
    'FiraCode NF', 'CaskaydiaCove NF', Consolas, 'Courier New', monospace

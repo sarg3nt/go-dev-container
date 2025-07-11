@@ -9,10 +9,10 @@
 
 # https://hub.docker.com/r/jdxcode/mise/tags
 # This is latest.
-FROM jdxcode/mise@sha256:f6a96c629ed75c908540acda407194e45544d10e982744b1f02fe78892aaa804 AS mise
+FROM jdxcode/mise@sha256:5a4eb0b7b6687f2f42ad24d37a50e605b6064d4cd051edb3286a30311539715c AS mise
 
 # https://hub.docker.com/r/rockylinux/rockylinux/tags
-FROM rockylinux/rockylinux:9-ubil@sha256:a475955a742ea1e3f83d5765aec206804a714c9b654d17b691c9c17a5da02c8f AS final
+FROM rockylinux/rockylinux:10-ubi@sha256:eca03145dd5e0b2a281eef164d391e4758b4a5962d29b688d15a72cef712fbb4 AS final
 
 LABEL org.opencontainers.image.source=https://github.com/sarg3nt/go-dev-container
 
