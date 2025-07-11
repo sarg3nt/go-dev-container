@@ -89,7 +89,7 @@ We've included an `install.sh` script to automate the process of copying the abo
 
 The script must be ran from the root of the `go-dev-container` project.  
 
-> [!EXAMPLE]  
+> **Example:**  
 > `./install.sh ~/src/my-go-project`
 
 ### Dev Container Setup
@@ -119,7 +119,7 @@ You can run `dev.sh` in multiple terminals once VSCode is running and the contai
 
 To use the `./dev.sh` script, simply run it.  It will automatically open the dev container once VSCode starts.
 
-> [!NOTE]
+> [!NOTE]  
 > If you have not opened the dev container before or if it has been updated it will download the container from Github, which can take a while.
 
 ## Starship 
