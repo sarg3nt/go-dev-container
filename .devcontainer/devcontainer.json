@@ -8,8 +8,8 @@
     "source=go-dev-container-bashhistory,target=/commandhistory,type=volume",
     "source=go-dev-container-plugins,target=/home/vscode/.vscode-server/extensions,type=volume",
     ///// The following should be the same for all dev containers using this image. The post_start_command.sh relies on these.
-    // Your host should have a .docker directory set up and you should be logged into any Artifactory
-    // repositories you need access to in the dev container.  Logging into a repo inside the dev container will not stick.
+    // Your host should have a .docker directory set up and you should be logged into any repos you need access to.
+    // Logging into a repo inside the dev container will not stick.
     "source=${localEnv:HOME}/.docker,target=/home/vscode/.docker-localhost,type=bind",
     // If you will be working with Kubernetes you should have a configured kube config file in your .kube directory.
     "source=${localEnv:HOME}/.kube,target=/home/vscode/.kube-localhost,type=bind",
