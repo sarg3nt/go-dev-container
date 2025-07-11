@@ -176,8 +176,8 @@ The fonts must be installed in your operating system to be used in VSCode.  If y
    ```
    'FiraCode NF', 'CaskaydiaCove NF', Consolas, 'Courier New', monospace
    ```
-    > [!NOTE]  
-    > This assumes you chose "FiraCode NF", if not, replace the first font name with the name of the font you installed in Windows.
+> [!NOTE]  
+> This assumes you chose "FiraCode NF", if not, replace the first font name with the name of the font you installed in Windows.
 
 ## Contributions
 
