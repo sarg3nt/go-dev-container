@@ -174,8 +174,8 @@ The fonts must be installed in your operating system to be used in VSCode.  If y
 1. Expand `Text Editor` --> select `Font`
 1. In the `Font Family` text box paste the following:  
 
-    > [!NOTE]  
-    > This assumes you chose "FiraCode NF", if not, replace the first font name with the name of the font you installed in Windows.
+  > [!NOTE]  
+  > This assumes you chose "FiraCode NF", if not, replace the first font name with the name of the font you installed in Windows.
 
    ```
    'FiraCode NF', 'CaskaydiaCove NF', Consolas, 'Courier New', monospace
