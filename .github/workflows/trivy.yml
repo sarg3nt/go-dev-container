@@ -75,7 +75,7 @@ jobs:
           TRIVY_SKIP_JAVA_DB_UPDATE: true
 
       - name: Upload Trivy Results
-        uses: github/codeql-action/upload-sarif@45775bd8235c68ba998cffa5171334d58593da47
+        uses: github/codeql-action/upload-sarif@d3678e237b9c32a6c9bffb3315c335f976f3549f
         with:
           sarif_file: 'trivy-results.sarif'
 
